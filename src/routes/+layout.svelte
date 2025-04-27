@@ -6,7 +6,7 @@
 
 <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
 	<!-- Background effects -->
-	<div class="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+	<div class="fixed inset-0  bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
 	<div class="fixed inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10"></div>
 	
 	<!-- Main content -->
