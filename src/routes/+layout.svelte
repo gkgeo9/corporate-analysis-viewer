@@ -1,7 +1,14 @@
 <script>
 	import '../app.css';
+	import { createSafariClass } from '$lib/utils/browserDetect';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
+	let glassClass = 'glass';
+	
+	onMount(() => {
+		glassClass = createSafariClass();
+	});
 </script>
 
 <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -11,7 +18,7 @@
 	
 	<!-- Main content -->
 	<div class="relative z-10">
-		<nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+		<nav class="fixed top-0 left-0 right-0 z-50 {glassClass} border-b border-white/10">
 			<div class="container mx-auto px-4 py-4 flex items-center justify-between">
 				<a href="/" class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
 					CorpAnalysis

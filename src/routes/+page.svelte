@@ -2,11 +2,15 @@
   import { db } from '$lib/firebase';
   import { collection, getDocs } from 'firebase/firestore';
   import { onMount } from 'svelte';
+  import { createSafariClass } from '$lib/utils/browserDetect';
   
   let analyses = [];
   let loading = true;
+  let glassClass = 'glass';
   
   onMount(async () => {
+    glassClass = createSafariClass();
+    
     try {
       const querySnapshot = await getDocs(collection(db, 'corporate-analysis'));
       analyses = querySnapshot.docs.map(doc => ({
@@ -58,7 +62,7 @@
         {#each analyses as analysis}
           <a 
             href="/analysis/{analysis.id}" 
-            class="glass glass-hover rounded-xl p-6 group"
+            class="{glassClass} glass-hover rounded-xl p-6 group"
           >
             <div class="flex items-center gap-4">
               <div class="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg">

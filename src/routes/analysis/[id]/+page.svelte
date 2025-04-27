@@ -3,12 +3,16 @@
   import { db } from '$lib/firebase';
   import { doc, getDoc } from 'firebase/firestore';
   import { onMount } from 'svelte';
+  import { createSafariClass } from '$lib/utils/browserDetect';
   
   let analysis = null;
   let loading = true;
   let viewMode = 'formatted'; // 'formatted' or 'json'
+  let glassClass = 'glass';
   
   onMount(async () => {
+    glassClass = createSafariClass();
+    
     try {
       const docRef = doc(db, 'corporate-analysis', $page.params.id);
       const docSnap = await getDoc(docRef);
@@ -62,13 +66,13 @@
   </div>
   
   {#if loading}
-    <div class="glass rounded-2xl p-8">
+    <div class="{glassClass} rounded-2xl p-8">
       <div class="flex items-center justify-center py-12">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
       </div>
     </div>
   {:else if analysis}
-    <div class="glass rounded-2xl p-8">
+    <div class="{glassClass} rounded-2xl p-8">
       <div class="mb-8">
         <div class="flex items-start justify-between">
           <div>
@@ -109,7 +113,7 @@
       
       {#if viewMode === 'json'}
         <div class="space-y-6">
-          <div class="glass rounded-xl p-6">
+          <div class="{glassClass} rounded-xl p-6">
             <h2 class="text-xl font-semibold mb-4">Analysis Data (JSON)</h2>
             <div class="overflow-hidden rounded-lg">
               <pre class="bg-black/30 p-6 overflow-x-auto text-sm text-gray-300">
@@ -122,7 +126,7 @@
         <div class="space-y-6">
           {#if analysis.data && typeof analysis.data === 'object'}
             {#each Object.entries(analysis.data) as [key, value]}
-              <div class="glass rounded-xl p-6">
+              <div class="{glassClass} rounded-xl p-6">
                 <h2 class="text-2xl font-semibold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   {getTitle(key)}
                 </h2>

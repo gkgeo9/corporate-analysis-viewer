@@ -2,6 +2,8 @@
   import { db } from '$lib/firebase';
   import { collection, addDoc } from 'firebase/firestore';
   import { goto } from '$app/navigation';
+  import { createSafariClass } from '$lib/utils/browserDetect';
+  import { onMount } from 'svelte';
   
   let files;
   let message = '';
@@ -10,8 +12,13 @@
   let isDragging = false;
   let isAuthenticated = false;
   let password = '';
+  let glassClass = 'glass';
   
   const CORRECT_PASSWORD = 'goofygilbert';
+  
+  onMount(() => {
+    glassClass = createSafariClass();
+  });
   
   function checkPassword() {
     if (password === CORRECT_PASSWORD) {
@@ -89,7 +96,7 @@
     </a>
   </div>
   
-  <div class="glass rounded-2xl p-8">
+  <div class="{glassClass} rounded-2xl p-8">
     <h1 class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-8">
       Upload Analysis
     </h1>
