@@ -10,7 +10,7 @@
   
   onMount(async () => {
     try {
-      const docRef = doc(db, 'analyses', $page.params.id);
+      const docRef = doc(db, 'corporate-analysis', $page.params.id);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {

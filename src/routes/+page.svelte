@@ -8,7 +8,7 @@
   
   onMount(async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'analyses'));
+      const querySnapshot = await getDocs(collection(db, 'corporate-analysis'));
       analyses = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ticker: doc.data().ticker,

@@ -26,7 +26,7 @@
         const ticker = file.name.split('_')[0];
         const timestamp = new Date().toISOString();
         
-        await addDoc(collection(db, 'analyses'), {
+        await addDoc(collection(db, 'corporate-analysis'), {
           ticker,
           timestamp,
           fileName: file.name,
