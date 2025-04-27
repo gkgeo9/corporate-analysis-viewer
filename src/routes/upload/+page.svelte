@@ -8,6 +8,21 @@
   let messageType = '';
   let uploading = false;
   let isDragging = false;
+  let isAuthenticated = false;
+  let password = '';
+  
+  const CORRECT_PASSWORD = 'goofygilbert';
+  
+  function checkPassword() {
+    if (password === CORRECT_PASSWORD) {
+      isAuthenticated = true;
+      message = 'Access granted!';
+      messageType = 'success';
+    } else {
+      message = 'Incorrect password';
+      messageType = 'error';
+    }
+  }
   
   async function handleUpload() {
     if (!files || files.length === 0) {
@@ -79,75 +94,109 @@
       Upload Analysis
     </h1>
     
-    <div 
-      class="border-2 border-dashed rounded-xl p-12 text-center {isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-gray-600'} transition-colors"
-      on:dragover={handleDragOver}
-      on:dragleave={handleDragLeave}
-      on:drop={handleDrop}
-    >
-      <input 
-        type="file" 
-        accept=".json" 
-        bind:files 
-        class="hidden" 
-        id="file-upload"
-        on:change={() => message = ''}
-      />
+    {#if !isAuthenticated}
+      <div class="max-w-md mx-auto">
+        <h2 class="text-xl font-semibold text-center mb-6">Password Required</h2>
+        <form on:submit|preventDefault={checkPassword} class="space-y-4">
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+              Enter Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              bind:value={password}
+              class="w-full px-4 py-3 rounded-lg bg-black/30 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+              placeholder="Enter password to access upload"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full btn-primary"
+          >
+            Submit
+          </button>
+        </form>
+        
+        {#if message}
+          <div class="mt-6 p-4 rounded-lg {messageType === 'success' ? 'bg-green-500/20 border border-green-500/30' : 'bg-red-500/20 border border-red-500/30'}">
+            <p class="{messageType === 'success' ? 'text-green-400' : 'text-red-400'} text-center">
+              {message}
+            </p>
+          </div>
+        {/if}
+      </div>
+    {:else}
+      <div 
+        class="border-2 border-dashed rounded-xl p-12 text-center {isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-gray-600'} transition-colors"
+        on:dragover={handleDragOver}
+        on:dragleave={handleDragLeave}
+        on:drop={handleDrop}
+      >
+        <input 
+          type="file" 
+          accept=".json" 
+          bind:files 
+          class="hidden" 
+          id="file-upload"
+          on:change={() => message = ''}
+        />
+        
+        <label for="file-upload" class="cursor-pointer">
+          <div class="flex flex-col items-center">
+            {#if files && files[0]}
+              <svg class="w-16 h-16 text-green-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-xl font-semibold text-white mb-2">{files[0].name}</p>
+              <p class="text-gray-400">Ready to upload</p>
+            {:else}
+              <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              </svg>
+              <p class="text-xl font-semibold text-white mb-2">Drop your JSON file here</p>
+              <p class="text-gray-400 mb-4">or click to browse</p>
+              <span class="btn-secondary">Choose File</span>
+            {/if}
+          </div>
+        </label>
+      </div>
       
-      <label for="file-upload" class="cursor-pointer">
-        <div class="flex flex-col items-center">
-          {#if files && files[0]}
-            <svg class="w-16 h-16 text-green-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="text-xl font-semibold text-white mb-2">{files[0].name}</p>
-            <p class="text-gray-400">Ready to upload</p>
-          {:else}
-            <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
-            <p class="text-xl font-semibold text-white mb-2">Drop your JSON file here</p>
-            <p class="text-gray-400 mb-4">or click to browse</p>
-            <span class="btn-secondary">Choose File</span>
-          {/if}
+      {#if files && files[0]}
+        <div class="mt-8 flex justify-center">
+          <button 
+            on:click={handleUpload} 
+            class="btn-primary flex items-center gap-2"
+            disabled={uploading}
+          >
+            {#if uploading}
+              <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Uploading...
+            {:else}
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+              </svg>
+              Upload Analysis
+            {/if}
+          </button>
         </div>
-      </label>
-    </div>
-    
-    {#if files && files[0]}
-      <div class="mt-8 flex justify-center">
-        <button 
-          on:click={handleUpload} 
-          class="btn-primary flex items-center gap-2"
-          disabled={uploading}
-        >
-          {#if uploading}
-            <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Uploading...
-          {:else}
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-            </svg>
-            Upload Analysis
-          {/if}
-        </button>
+      {/if}
+      
+      {#if message}
+        <div class="mt-6 p-4 rounded-lg {messageType === 'success' ? 'bg-green-500/20 border border-green-500/30' : 'bg-red-500/20 border border-red-500/30'}">
+          <p class="{messageType === 'success' ? 'text-green-400' : 'text-red-400'} text-center">
+            {message}
+          </p>
+        </div>
+      {/if}
+      
+      <div class="mt-8 text-center text-gray-400 text-sm">
+        <p>Supported format: JSON files</p>
+        <p>File name should start with ticker symbol (e.g., AAPL_analysis.json)</p>
       </div>
     {/if}
-    
-    {#if message}
-      <div class="mt-6 p-4 rounded-lg {messageType === 'success' ? 'bg-green-500/20 border border-green-500/30' : 'bg-red-500/20 border border-red-500/30'}">
-        <p class="{messageType === 'success' ? 'text-green-400' : 'text-red-400'} text-center">
-          {message}
-        </p>
-      </div>
-    {/if}
-    
-    <div class="mt-8 text-center text-gray-400 text-sm">
-      <p>Supported format: JSON files</p>
-      <p>File name should start with ticker symbol (e.g., AAPL_analysis.json)</p>
-    </div>
   </div>
 </div>
